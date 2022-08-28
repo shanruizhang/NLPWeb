@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css" crossorigin="anonymous">
+    <script src="/js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script src="/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="/js/echarts.common.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="container">
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">NLP Project</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/">Text Analysis</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+<h1>
+    Text Analysis
+</h1>
+<div>
+    Please enter the document below for text analysis
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <textarea id="text" class="form-control" style="height: 200px; width: 100%"></textarea>
+    </div>
+</div>
+<div class="row" style="margin-top: 10px">
+    <div class="col-lg-12">
+        <div>
+            <button class="btn btn-primary" onclick="analysisText()">Analysis</button>
+        </div>
+        <div id="error_message" class="alert alert-danger" style="margin-top: 10px; display: none;">
+        </div>
+    </div>
+</div>
+
+<div class="row result" style="margin-top: 10px">
+    <div class="col-lg-12">
+        <div>Sentence count of the document: <span id="sentence_count"></span></div>
+        <div>Tokens count of the document: <span id="tokens_count"></span></div>
+        <div>Nouns count of the document: <span id="nouns_count"></span></div>
+    </div>
+</div>
+<div class="row result" style="margin-top: 10px">
+    <div class="col-lg-12">
+        <table class="table">
+            <thead>
+            <tr>
+                <td><b>Tag Name</b></td>
+                <td><b>Tag Description</b></td>
+                <td><b>Count</b></td>
+            </tr>
+            </thead>
+            <tbody id="tbody">
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+
+    var tagMeanings = {
+        "CC": "coordinating conjunction",
+        "CD": "cardinal digit",
+        "DT": "determiner",
+        "EX": "existential there",
+        "FW": "foreign word",
+        "IN": "preposition/subordinating conjunction",
+        "JJ": "adjective",
+        "JJR": "adjective: comparative",
+        "JJS": "adjective: superlative",
+        "LS": "list market",
+        "MD": "modal",
+        "NN": "noun: singular",
+        "NNS": "noun plural",
+        "NNP": "proper noun: singular",
+        "NNPS": "proper noun: plural",
+        "PDT": "predeterminer ",
+        "POS": "possessive ending ",
+        "PRP": "personal pronoun",
+        "PRP$": "possessive pronoun",
+        "RB": "adverb",
+        "RBR": "adverb: comparative",
+        "RBS": "adverb: superlative",
+        "RP": "particle ",
+        "TO": "infinite marker",
+        "UH": "interjection",
+        "VB": "verb",
+        "VBG": "verb gerund",
+        "VBD": "verb past tense",
+        "VBN": "verb past participle",
+        "VBP": "verb: present tense not 3rd person singular",
+        "VBZ": "verb: present tense with 3rd person singular,",
+        "WDT": "wh-determiner",
+        "WP": "wh- pronoun",
+        "WRB": "wh- adverb",
+    };
+
+    function checkInput() {
+        var text = $("#text").val();
+        if (text.trim().length === 0) {
+            $("#error_message").show();
+            $("#error_message").text("The input document should not be empty!");
+            return false;
+        } else if (text.trim().length < 10) {
+            $("#error_message").show();
+            $("#error_message").text("The input document should be longer than 10 characters!");
+            return false;
+        }
+        $("#error_message").hide();
+        $("#error_message").text("");
+        return true;
+    }
+
+    function analysisText() {
+        if (checkInput()) {
+            $(".result").show();
+            var text = $("#text").val();
+            $("#tbody").empty();
+            $.post("/analysis", {'text': text}, function (data) {
+                console.log(data);
+                var sentenceCount = data.sentenceCount;
+                var tokensCount = data.tokensCount;
+                var nounsCount = data.nounsCount;
+                var tagCountMap = data.tagCountMap;
+
+                $("#sentence_count").text(sentenceCount);
+                $("#tokens_count").text(tokensCount);
+                $("#nouns_count").text(nounsCount);
+
+                for (var tag in tagCountMap) {
+                    var count = tagCountMap[tag];
+                    var tr = $("<tr></tr>");
+                    var td1 = $("<td></td>");
+                    var td2 = $("<td></td>");
+                    var td3 = $("<td></td>");
+                    td1.text(tag);
+                    td2.text(tagMeanings[tag]);
+                    td3.text(count);
+                    tr.append(td1);
+                    tr.append(td2);
+                    tr.append(td3);
+                    $("#tbody").append(tr);
+                }
+            });
+        }else{
+            $(".result").hide();
+        }
+    }
+
+    $(".result").hide();
+</script>
+
+</body>
+</html>
