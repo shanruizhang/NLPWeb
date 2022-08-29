@@ -6,3 +6,6 @@ The outlines of NLPWeb project:
 4. Add Bootstrap framework to the project, create web pages for demonstrating the analysis result.
 5. Create RESTFul web api for frontend
 6. Use jquery ajax to retrieve the analysis result
+
+For part1: run NLPMain.java
+For part2: run NLPWebApplication.java
