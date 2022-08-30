@@ -7,7 +7,8 @@ The outlines of NLPWeb project:
 5. Create RESTFul web api for frontend
 6. Use jquery ajax to retrieve the analysis result
 
-For part1: run NLPMain.java,the standard input is the name of the file you want parse. Just enter "text.txt"(a test file in this repo),and then enter any name you prefer for the ouput file. The analysis result will printed out on the console and also saved as a file in json format.
+For part1: run NLPMain.java,the standard input is the name of the file you want parse. Just enter "text.txt"(a test file in this repo),
+and then enter any name you prefer for the ouput file. The analysis result will printed out on the console and also saved as a file in json format.
 There is a util class "NLPUtils.java" for easy use of other people in this project.Some basic functions of coreNLP can be used directly using this class.
 AnalysisResult.java is the result object for returning of POST action of spring boot.IndexController.java and ApiController.java is the controller of spring boot mvc.
 
